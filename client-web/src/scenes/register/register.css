@@ -1,0 +1,24 @@
+.form{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin: 20px;
+}
+
+.form-right, .form-left{
+    display: flex;
+    flex-direction: column;
+    flex:1;
+    padding: 20px;   
+}
+
+.form label{
+    font-size: 20px;
+    text-transform: capitalize;
+}
+
+
+.form input{
+    padding:10px;
+    margin-bottom: 20px;
+}
