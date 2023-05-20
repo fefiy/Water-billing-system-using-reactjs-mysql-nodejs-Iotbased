@@ -53,7 +53,6 @@ const App = () => {
     }
     return children;
   };
-
   const router = createBrowserRouter([
     {
       path: "/",
@@ -86,7 +85,6 @@ const App = () => {
         {
           path: "/admin/register",
           element:<Register />
-          
         }
       ],
     },
