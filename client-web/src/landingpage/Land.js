@@ -2,6 +2,8 @@ import React from "react";
 import "./css/media.css";
 import "./css/theme.css";
 import Login from "./Login";
+import {useNavigate} from "react-router-dom"
+
 const Land = () => {
   return (
     <div>

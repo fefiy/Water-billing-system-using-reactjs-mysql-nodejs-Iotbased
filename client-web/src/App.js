@@ -1,16 +1,15 @@
 import "./App.css";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { colorModeContext, useMode } from "./theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
+import { makeRequest } from "./axios";
 import React from "react";
 import Topbar from "../src/scenes/global/Topbar";
 import Sidebar from "./scenes/global/Sidebar";
 import Dashboards from "./scenes/dashboard/Dashboards";
-import { Route, Routes } from "react-router-dom";
 import Team from "./scenes/team/Team";
 import Contacts from "./scenes/contacts/Contacts";
 import Invoices from "./scenes/invoices/Invoices";
-import User from "./scenes/createuser/User";
 import Calendar from "./scenes/calender/Calendar";
 import Register  from "./scenes/register/Register";
 import Land from "./landingpage/Land";
@@ -25,7 +24,26 @@ import {
 } from "react-router-dom";
 import Login from "./landingpage/Login";
 const App = () => {
+  const [isTokenValid, setIsTokenValid] = useState(false)
+  const {currentUser } = useContext(AuthContext)
   const queryClient = new QueryClient();
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        console.log("access is fetching")
+        const response = await makeRequest.get("/autenticate");
+        console.log("tokeV", response.data)
+        setIsTokenValid(response.data)
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+
   const Layout = () => {
     return (
       <QueryClientProvider client={queryClient}>
@@ -45,10 +63,8 @@ const App = () => {
       </QueryClientProvider>
     );
   };
-  const [isTokenValid, setIsTokenValid] = useState(false);
-  const { currentUser } = useState(null);
   const ProtectedRoue = ({ children }) => {
-    if (currentUser || isTokenValid) {
+    if (!currentUser || !isTokenValid || currentUser.role != "admin") {
       return <Navigate to="/login" />;
     }
     return children;
