@@ -2,42 +2,41 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const db = require("../connect");
 
-
 const register = (req, res) => {
- const role_id = req.body.role_id;
- console.log(role_id)
+  const role_id = req.body.role_id;
+  console.log(role_id);
 
- if(role_id == 2){
-  console.log("admin is calleded")
-  const q = "SELECT * FROM admin WHERE username = ?";
-  db.query(q, [req.body.username], (err, data) => {
-    if (err) return res.status(500).json(err);
-    if (data.length) return res.status(409).json("Admin already exists!");
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPassword = bcrypt.hashSync(req.body.password, salt);
-
-    const q =
-      "INSERT INTO admin (`name`,`email`,`password`,`username`, `phone`) VALUE (?)";
-
-    const values = [
-      req.body.name,
-      req.body.email,
-      hashedPassword,
-      req.body.username,
-      req.body.phone,
-    ];
-    console.log("it is admin");
-    console.log(values);
-
-    db.query(q, [values], (err, data) => {
+  if (role_id == 2) {
+    console.log("admin is calleded");
+    const q = "SELECT * FROM admin WHERE username = ?";
+    db.query(q, [req.body.username], (err, data) => {
       if (err) return res.status(500).json(err);
-      return res.status(200).json("User has been created.");
+      if (data.length) return res.status(409).json("Admin already exists!");
+      const salt = bcrypt.genSaltSync(10);
+      const hashedPassword = bcrypt.hashSync(req.body.password, salt);
+
+      const q =
+        "INSERT INTO admin (`name`,`email`,`password`,`username`, `phone`) VALUE (?)";
+
+      const values = [
+        req.body.name,
+        req.body.email,
+        hashedPassword,
+        req.body.username,
+        req.body.phone,
+      ];
+      console.log("it is admin");
+      console.log(values);
+
+      db.query(q, [values], (err, data) => {
+        if (err) return res.status(500).json(err);
+        return res.status(200).json("User has been created.");
+      });
     });
-  });
-}
-  if(role_id == 1){
+  }
+  if (role_id == 1) {
     // user creation
-    console.log("it is user")
+    console.log("it is user");
     const q = "SELECT * FROM users WHERE mac_address = ?";
     db.query(q, [req.body.mac], (err, data) => {
       if (err) return res.status(500).json(err);
@@ -66,70 +65,8 @@ const register = (req, res) => {
         return res.status(200).json("User has been created.");
       });
     });
-  } 
-
+  }
 };
-
-const registeruser = (req, res)=>{
-  const q = "SELECT * FROM users WHERE mac_address = ?";
-  db.query(q, [req.body.mac], (err, data) => {
-    if (err) return res.status(500).json(err);
-    if (data.length) return res.status(409).json("User already exists!");
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPassword = bcrypt.hashSync(req.body.password, salt);
-
-    const q =
-      "INSERT INTO users (`name`,`email`,`password`, `mac_address`,`phone`, `address`, `region`, `zone` ) VALUE (?)";
-
-    const values = [
-      req.body.name,
-      req.body.email,
-      hashedPassword,
-      req.body.mac,
-      req.body.phone,
-      req.body.wereda,
-      req.body.region,
-      req.body.zone,
-    ];
-
-    console.log(values);
-
-    db.query(q, [values], (err, data) => {
-      if (err) return res.status(500).json(err);
-      return res.status(200).json("User has been created.");
-    });
-  });
-}
-
-
-const registeradmin = (req, res)=>{
-  console.log("admin is calleded")
-  const q = "SELECT * FROM admin WHERE username = ?";
-  db.query(q, [req.body.username], (err, data) => {
-    if (err) return res.status(500).json(err);
-    if (data.length) return res.status(409).json("Admin already exists!");
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPassword = bcrypt.hashSync(req.body.password, salt);
-
-    const q =
-      "INSERT INTO admin (`name`,`email`,`password`,`username`, `phone`) VALUE (?)";
-
-    const values = [
-      req.body.name,
-      req.body.email,
-      hashedPassword,
-      req.body.username,
-      req.body.phone,
-    ];
-    console.log("it is admin");
-    console.log(values);
-
-    db.query(q, [values], (err, data) => {
-      if (err) return res.status(500).json(err);
-      return res.status(200).json("User has been created.");
-    });
-  });
-} 
 
 const login = (req, res) => {
   const { mac, password } = req.body;
@@ -139,22 +76,24 @@ const login = (req, res) => {
 
   // Check user credentials
   db.query(userQuery, [mac], (err, userResults) => {
+    console.log("user credential is callded")
     if (err) return res.status(500).json(err);
-
     if (userResults.length > 0) {
       const user = userResults[0];
       const passwordMatch = bcrypt.compareSync(password, user.password);
-
+      console.log(user)
       if (passwordMatch) {
-        const token = jwt.sign({ id: user.id }, "your_secret_key"
-        // , {
-        //   // expiresIn: "24h",
-        // }
+        const token = jwt.sign(
+          { id: user.id },
+          "your_secret_key"
+          // , {
+          //   // expiresIn: "24h",
+          // }
         );
 
         const { password, ...others } = user;
         others.role = "user";
-
+        console.log(others)
         res.cookie("accessToken", token, {
           httpOnly: true,
         });
@@ -170,10 +109,12 @@ const login = (req, res) => {
         const passwordMatch = bcrypt.compareSync(password, admin.password);
 
         if (passwordMatch) {
-          const token = jwt.sign({ id: admin.id }, "your_secret_key"
-          // , {
-          //   // expiresIn: "24h",
-          // }
+          const token = jwt.sign(
+            { id: admin.id },
+            "your_secret_key"
+            // , {
+            //   // expiresIn: "24h",
+            // }
           );
 
           const { password, ...others } = admin;
@@ -191,27 +132,6 @@ const login = (req, res) => {
   });
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const logout = (req, res) => {
   res
     .clearCookie("accessToken", {
@@ -223,67 +143,25 @@ const logout = (req, res) => {
 };
 
 const accessToken = (req, res) => {
-  console.log("accessToken is working");
+  console.log(" aceess token iw=s working");
   const token = req.cookies.accessToken;
   if (!token) {
     res.json({ isTrue: false });
   } else {
-    // Verify the token
-    jwt.verify(token, 'your_secret_key', (err, decoded) => {
-      if (err) {
-        res.json({ isTrue: false });
-      } else {
-        // Token is valid
-        res.json({ isTrue: true });
-      }
-    });
+    res.json({ isTrue: true });
   }
-};
-const getAllusersinfo = (req, res) => {
-  console.log("user info is working");
-  const q = "SELECT * FROM users WHERE is_deleted = 0"
-  db.query(q, (err, data) => {
-    if (err) return res.status(500).json(err);
-    return res.status(200).json(data);
-  });
+  //   res.json(req.cookie.accessToken)
 };
 
-const getAmount = (req, res) => {
-  const q = "SELECT * FROM waterusage as w JOIN users as u ON(u.id= w.user_id)";
-  db.query(q, (err, data) => {
-    if (err) return res.status(500).json(err);
-    return res.status(200).json(data);
-  });
-};
 
-const temp = (req, res) => {
-  const temperature = req.body.temperature;
 
-  const sql = "INSERT INTO waterusage (amount) VALUES (?)";
-  const values = [temperature];
-  console.log(values);
-  console.log("temprature api is callede");
-  db.query(sql, values, (err, result) => {
-    if (err) {
-      console.error("Error inserting temperature: " + err.message);
-      res.status(500).send("Internal Server Error");
-      return;
-    }
-    console.log("New record created successfully");
-    res.status(200).send("Temperature inserted successfully");
-  });
-};
 
 module.exports = {
   register,
   login,
   logout,
-  getAllusersinfo,
   accessToken,
-  getAmount,
-  temp,
-  registeruser,
-  registeradmin
+
 };
 const logiin = (req, res) => {
   console.log("is working");

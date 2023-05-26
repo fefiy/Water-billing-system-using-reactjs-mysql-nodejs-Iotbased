@@ -8,18 +8,35 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import './contact.css'
 import { Modal, Form } from "react-bootstrap";
-import { useState } from "react";
+import { useState , useContext} from "react";
 import Swal from "sweetalert2";
+import { AuthContext } from "../../context/authContext";
+import EditUserModal from "../profileUpdate/EditUserModal";
+import Update from "../updates/Update";
 
 const Contacts = () => {
+  const queryClient = useQueryClient();
   const theme = useTheme();
+  const { currentUser} = useContext(AuthContext)
   const colors = tokens(theme.palette.mode);
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
-
+  const [showModal, setShowModal] = useState(false)
   const { isLoading, error, data } = useQuery(["alluser"], () =>
     makeRequest.get("/users").then((res) => {
       return res.data;
     })
+  );
+
+  const deleteMutation = useMutation(
+    (userId) => {
+      console.log(userId)
+      return makeRequest.post("/users/"+userId);
+    },
+    {
+      onSuccess: () => {
+        // Invalidate and refetch
+        queryClient.invalidateQueries(["alluser"]);
+      },
+    }
   );
   const handleDelete = (id) => {
     Swal.fire({
@@ -33,7 +50,7 @@ const Contacts = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         // Perform the deletion logic here
-        // ...
+        deleteMutation.mutate(id)
         // Show a success message
         Swal.fire("Deleted!", "Your item has been deleted.", "success");
       }
@@ -41,7 +58,7 @@ const Contacts = () => {
   };
 
   const handleUpdate = (id)=>{
-    
+     setShowModal(true)
   }
   console.log(data);
   console.log(error)
@@ -109,6 +126,7 @@ const Contacts = () => {
 
   return (
     <>
+    {showModal && <Update user={currentUser} showModal={showModal} setShowModal={setShowModal} />}
       {isLoading ? (
         <h3>Loading</h3>
       ) : (

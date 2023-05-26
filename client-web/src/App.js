@@ -23,6 +23,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import Login from "./landingpage/Login";
+import UserPage from "./useInterface/UserPage";
 const App = () => {
   const [isTokenValid, setIsTokenValid] = useState(false)
   const {currentUser } = useContext(AuthContext)
@@ -63,12 +64,38 @@ const App = () => {
       </QueryClientProvider>
     );
   };
+
+  const LayoutUser = ()=>{
+    return(
+    // <QueryClientProvider client={queryClient}>
+    <colorModeContext.Provider value={colorMode}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline>
+          <div className="app">
+            <main className="content">
+              <Topbar />
+              <Outlet />
+            </main>
+          </div>
+        </CssBaseline>
+      </ThemeProvider>
+    </colorModeContext.Provider>
+    )
+  // </QueryClientProvider>
+  }
   const ProtectedRoue = ({ children }) => {
     if (!currentUser || !isTokenValid || currentUser.role != "admin") {
       return <Navigate to="/login" />;
     }
     return children;
   };
+
+  const ProtectedRoueUser = ({children})=>{
+    if (!currentUser || !isTokenValid || currentUser.role != "user") {
+      return <Navigate to="/login" />;
+    }
+    return children;
+  }
   const router = createBrowserRouter([
     {
       path: "/",
@@ -107,6 +134,22 @@ const App = () => {
     {
       path:"/login",
       element:<Login />
+    },
+    {
+      path:"/user",
+      element:(
+        <ProtectedRoueUser>
+          <LayoutUser />
+        </ProtectedRoueUser>
+      ),
+      children:[
+        {
+          path:"/user",
+          element: <UserPage/>
+        }
+
+      ]
+
     }
   ]);
 

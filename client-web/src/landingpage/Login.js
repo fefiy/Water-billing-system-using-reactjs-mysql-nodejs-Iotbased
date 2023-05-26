@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
   const navigate = useNavigate();
   const [err, setErr] = useState(null);
-  const { login } = useContext(AuthContext);
+  const { login, currentUser } = useContext(AuthContext);
   const [inputs, setInputs] = useState({
     mac: "",
     password: "",
@@ -16,11 +16,17 @@ const Login = () => {
     try{
         await login(inputs)
         console.log("log in calleded")
-        navigate("/admin")
+        if(currentUser.role == "admin"){
+          navigate("/admin")
+        }
+        if(currentUser.role == "user"){
+          navigate("/user")
+        }
         console.log("after log in")
     // console.log(currentUser)
     }catch(err){
-        setErr(err.response.data)
+        setErr(err)
+        console.log("err", err)
     }
   }
 

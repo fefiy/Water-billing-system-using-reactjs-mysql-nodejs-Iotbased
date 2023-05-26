@@ -17,13 +17,14 @@ app.use((req, res, next) => {
     })
   );
 //  import routes
-
 const authRouter = require("./routes/auth")
 const userRouter = require("./routes/user")
+const waterRouter = require("./routes/water")
 
 app.use("/api", authRouter)
 app.use("/api", userRouter)
+app.use("/api", waterRouter)
 
 app.listen(3004 , ()=>{
-    console.log("app is connected on this port")
+    console.log("app is connected on 3004")
 })
