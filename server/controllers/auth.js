@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const db = require("../connect");
 
+
 const register = (req, res) => {
   const role_id = req.body.role_id;
   console.log(role_id);
