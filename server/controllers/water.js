@@ -2,10 +2,12 @@ const db = require("../connect");
 const nodemailer = require("nodemailer")
 const ejs = require('ejs')
 const path = require('path');
+require('dotenv').config();
+
 
 const getAmount = (req, res) => {
   const q =
-    "SELECT * FROM waterusage as w JOIN users as u ON (w.user_id= u.id) WHERE u.is_deleted = 0";
+    "SELECT * FROM waterusage as w JOIN users as u ON (w.user_id= u.id) JOIN usertracking as t ON(t.user_id = u.id) WHERE u.is_deleted = 0";
   db.query(q, (err, data) => {
     if (err) return res.status(500).json(err);
     return res.status(200).json(data);
@@ -146,8 +148,8 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false,
   auth: {
-    user: 'foziayimam87',
-    pass: 'skxfwymjmpqnlmzw'
+    user: process.env.EMAILUSER,
+    pass: process.env.EMAILPASSWORD
   }
 });
 
@@ -163,7 +165,7 @@ const sendEmail = (email, name, endDate, price, litter, month, year ) => {
     const logoPath = path.join(__dirname, 'assets', 'logo.png')
 
     const mailOptions = {
-      from: 'foziayimam87@gmail.com',
+      from: process.env.EMAIL,
       to: email,
       subject: 'Reminder: Payment Due for Water Services',
       html: renderedTemplate,
