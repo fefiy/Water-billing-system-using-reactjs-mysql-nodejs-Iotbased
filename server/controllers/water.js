@@ -1,13 +1,16 @@
 const db = require("../connect");
-const nodemailer = require("nodemailer")
-const ejs = require('ejs')
-const path = require('path');
-require('dotenv').config();
-
+const nodemailer = require("nodemailer");
+const ejs = require("ejs");
+const path = require("path");
+require("dotenv").config();
 
 const getAmount = (req, res) => {
-  const q =
-    "SELECT * FROM waterusage as w JOIN users as u ON (w.user_id= u.id) JOIN usertracking as t ON(t.user_id = u.id) WHERE u.is_deleted = 0";
+  const q = `SELECT *
+  FROM waterusage AS w
+  JOIN users AS u ON w.user_id = u.id
+  JOIN usertracking AS t ON t.user_id = u.id
+  LEFT JOIN paymentstatus AS p ON p.user_tracking_id = t.id `;
+
   db.query(q, (err, data) => {
     if (err) return res.status(500).json(err);
     return res.status(200).json(data);
@@ -39,9 +42,10 @@ const temp = (req, res) => {
           });
         } else {
           console.log("insert is calledd");
+          var date = new Date();
           const sql =
             "INSERT INTO waterusage (`amount`, `user_id`, `date`) VALUES (?, ?, ?)";
-          const values = [temperature, user.id, Date.now()];
+          const values = [temperature, user.id, date.toISOString()];
           db.query(sql, values, (err, insertedData) => {
             if (err) return res.status(500).json(err);
             return res.status(200).json("Amount inserted correctly");
@@ -142,61 +146,65 @@ const watertracking = (req, res) => {
   });
 };
 
-
 const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
+  host: "smtp.gmail.com",
   port: 587,
   secure: false,
   auth: {
     user: process.env.EMAILUSER,
-    pass: process.env.EMAILPASSWORD
-  }
+    pass: process.env.EMAILPASSWORD,
+  },
 });
 
-
-
-const sendEmail = (email, name, endDate, price, litter, month, year ) => {
-  ejs.renderFile('emailTemplate.ejs', { name, endDate, price , litter  }, (err, renderedTemplate) => {
-    if (err) {
-      console.error('Error rendering email template:', err);
-      // Handle the error here
-      return;
-    }
-    const logoPath = path.join(__dirname, 'assets', 'logo.png')
-
-    const mailOptions = {
-      from: process.env.EMAIL,
-      to: email,
-      subject: 'Reminder: Payment Due for Water Services',
-      html: renderedTemplate,
-      attachments: [
-        {
-          filename: 'logo.png',
-          path: logoPath,
-          cid: 'logo'
-        }
-      ]
-    };
-
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error('Error sending email:', error);
+const sendEmail = (email, name, endDate, price, litter, month, year) => {
+  ejs.renderFile(
+    "emailTemplate.ejs",
+    { name, endDate, price, litter, year, month },
+    (err, renderedTemplate) => {
+      if (err) {
+        console.error("Error rendering email template:", err);
         // Handle the error here
-      } else {
-        console.log('Email sent successfully!', info.response);
-        // Handle the success scenario here
+        return;
       }
-    });
-  });
+      const logoPath = path.join(__dirname, "assets", "logo.png");
+
+      const mailOptions = {
+        from: process.env.EMAIL,
+        to: email,
+        subject: "Reminder: Payment Due for Water Services",
+        html: renderedTemplate,
+        attachments: [
+          {
+            filename: "logo.png",
+            path: logoPath,
+            cid: "logo",
+          },
+        ],
+      };
+
+      console.log("mailOptions.form", mailOptions.from);
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error("Error sending email:", error);
+          // Handle the error here
+        } else {
+          console.log("Email sent successfully!", info.response);
+          // Handle the success scenario here
+        }
+      });
+    }
+  );
 };
 
 const waterttracking = (req, res) => {
-  const qw = "SELECT * FROM waterusage as w JOIN users as u ON (w.user_id = u.id) ";
-  const qt = "SELECT * FROM usertracking as t JOIN users as u ON (t.user_id = u.id)";
+  const qw =
+    "SELECT * FROM waterusage as w JOIN users as u ON (w.user_id = u.id) ";
+  const qt =
+    "SELECT * FROM usertracking as t JOIN users as u ON (t.user_id = u.id)";
   // const qu = "SELECT * FROM users WHERE `id`= ?"
   console.log("water track is calleded");
 
-  
   //Find water usage
   db.query(qw, (err, waterUsageData) => {
     if (err) return res.status(500).json(err);
@@ -221,7 +229,7 @@ const waterttracking = (req, res) => {
       // Insert new rows for users found only in water usage
       for (const userToAdd of usersToAdd) {
         const { user_id, date, amount } = userToAdd;
-      
+
         // db.query(qu, [user_id], (err, userinfo)=>{
         //   if(err) return res.status(401).json("users doesn't found")
         //   user = userinfo
@@ -231,16 +239,32 @@ const waterttracking = (req, res) => {
         console.log(user_id, amount, date);
 
         const insertQuery =
-        "INSERT INTO usertracking (user_id, start_date, end_date, month_amount) VALUES (?, ?, ?, ?)";
+          "INSERT INTO usertracking (user_id, start_date, end_date, month_amount) VALUES (?, ?, ?, ?)";
         const values = [user_id, date, currentDate.toISOString(), amount];
-        
-         sendEmail(userToAdd.email, userToAdd.name, currentDate.toISOString(),date ,40, amount) 
-        console.log(userToAdd.email)
+
+        var dates = new Date(date);
+        var end_date = new Date();
+        end_date.setDate(end_date.getDate() + 15);
+        var end_for_pay = end_date.toLocaleDateString();
+
+        const month = dates.toLocaleString("default", { month: "long" });
+        const year = dates.getFullYear();
+        // email, name, endDate, price, litter, month, year
+        sendEmail(
+          userToAdd.email,
+          userToAdd.name,
+          end_for_pay,
+          amount * 10 + 10,
+          amount,
+          month,
+          year
+        );
+        console.log(userToAdd.email);
         db.query(insertQuery, values, (err, data) => {
           if (err) {
             return res.status(500).json(err);
           }
-          console.log("usertrack inserted for the first time")
+          console.log("usertrack inserted for the first time");
         });
       }
 
@@ -249,19 +273,24 @@ const waterttracking = (req, res) => {
         waterUsage.some((usage) => usage.user_id === tracking.user_id)
       );
 
-      const mostRecentRecords = Object.values(usersToUpdate.reduce((acc, current) => {
-        const { user_id, end_date } = current;
-        if (!acc[user_id] || new Date(end_date) > new Date(acc[user_id].end_date)) {
-          acc[user_id] = current;
-        }
-        return acc;
-      }, {}));
+      const mostRecentRecords = Object.values(
+        usersToUpdate.reduce((acc, current) => {
+          const { user_id, end_date } = current;
+          if (
+            !acc[user_id] ||
+            new Date(end_date) > new Date(acc[user_id].end_date)
+          ) {
+            acc[user_id] = current;
+          }
+          return acc;
+        }, {})
+      );
 
-      console.log(mostRecentRecords)
-      
+      console.log(mostRecentRecords);
+
       mostRecentRecords.forEach((tracking) => {
         const { user_id } = tracking;
-        
+
         // Find the most recent end date for the current user
         const mostRecentEndDate = tracking.end_date;
 
@@ -274,16 +303,36 @@ const waterttracking = (req, res) => {
 
         // Insert a new row into the user_tracking table
         const insertQuery =
-        "INSERT INTO usertracking (user_id, start_date, end_date, month_amount) VALUES (?, ?, ?, ?)";
-        
+          "INSERT INTO usertracking (user_id, start_date, end_date, month_amount) VALUES (?, ?, ?, ?)";
+
         const values = [user_id, newStartDate, newEndDate, newAmount];
         // db.query(qu, [user_id], (err, userinfo)=>{
         //   if(err) return res.status(401).json("users doesn't found")
         //   user = userinfo
         // })
         // console.log(user)
-        console.log(tracking.email)
-        sendEmail(tracking.email, tracking.name ,newEndDate.toLocaleDateString() ,40, newAmount) 
+        console.log(tracking.email);
+        var date = new Date(newStartDate);
+        var end_date = new Date();
+        end_date.setDate(end_date.getDate() + 15);
+        var end_for_pay = end_date.toLocaleDateString();
+        console.log("end for pay", end_for_pay);
+        const month = date.toLocaleString("default", { month: "long" });
+        // const datelocla = date.toLocaleDateString()
+        // console.log("datelocal",datelocla)
+        // console.log(date)
+        // console.log(month)
+        const year = date.getFullYear();
+        // console.log('new end date', date.getMonth())
+        sendEmail(
+          tracking.email,
+          tracking.name,
+          end_for_pay,
+          newAmount * 10 + 10,
+          newAmount,
+          month,
+          year
+        );
         db.query(insertQuery, values, (err, data) => {
           if (err) {
             console.log(err);
@@ -298,118 +347,27 @@ const waterttracking = (req, res) => {
   });
 };
 
-
-
-
-
-
-// const sendEmail = (req,res) => {
-//   const mailOptions = {
-//     from: 'foziayimam87@gmail.com',
-//     to: 'seydaimam55@gmail.com', // Replace with the recipient's email address
-//     subject: 'Email Subject',
-//     text: "here is the message"
-//   };
-
-//   transporter.sendMail(mailOptions, (error, info) => {
-//     if (error) {
-//       console.error('Error sending email:', error);
-//     } else {
-//       console.log('Email sent successfully!', info.response);
-//     }
-//   });
-// };
-
-
-
+const waterRate = (req, res) => {
+  const q = "SELECT * FROM billrate";
+  let datta = null;
+  db.query(q, (err, data) => {
+    if (err) return res.status(500).json(err);
+    datta = data;
+  });
+  if (datta == null) {
+    console.log("it have to be insert");
+  } else {
+    console.log("it is already inserted please update it");
+  }
+};
 
 module.exports = {
   getAmount,
   temp,
   watertracking,
- waterttracking ,
- sendEmail
+  waterttracking,
+  waterRate,
 };
-
-
-// const watertracking = (req, res) => {
-//   qw = "SELECT * FROM waterusage";
-//   qt = "SELECT * FROM usertracking";
-
-//   let waterUsage;
-//   let userTracking;
-//   // find water usage
-//   db.query(qw, (err, data) => {
-//     if (err) return res.status(500).json(err);
-//     waterUsage = data;
-//   });
-//   // find user tracking
-//   db.query(qt, (err, data) => {
-//     if (err) return res.status(500).json(err);
-//     userTracking = data;
-//   });
-//   // find users that are only found in water-usage table
-//   const usersToAdd = waterUsage.filter(
-//     (waterEntry) =>
-//       !userTracking.some(
-//         (trackingEntry) => trackingEntry.user_id === waterEntry.userId
-//       )
-//   );
-//   // insert new row for users that are not found in usertracking but found in water usage
-//   const currentDate = new Date();
-//   for (const userToAdd of usersToAdd) {
-//     const { userId, startDate, amount } = userToAdd;
-//     const newTrackingEntry = {
-//       user_id: userId,
-//       start_date: startDate,
-//       end_date: currentDate.toISOString(),
-//       amount_fetched: amount,
-//     };
-//     const insertQuery = "INSERT INTO user_tracking VALUES ($1, $2, $3, $4)";
-
-//     const values = [
-//       [
-//         newTrackingEntry.user_id,
-//         newTrackingEntry.start_date,
-//         newTrackingEntry.end_date,
-//         newTrackingEntry.amount_fetched,
-//       ],
-//     ];
-//     db.query(insertQuery, values, (err, data) => {
-//       if (err) return res.status(500).json(err);
-//     });
-//   }
-//   //  for users which are found on both user_tracking and
-//   const usersToInsert = userTracking.filter((tracking) => {
-//     return waterUsage.some((usage) => usage.userId === tracking.userId);
-//   });
-
-//   usersToInsert.forEach((tracking) => {
-//     const { userId } = tracking;
-
-//     // Find the user tracking entry with the most recent endDate for the current user
-//     const userTrackingEntry = userTracking
-//       .filter((entry) => entry.userId === userId)
-//       .reduce((prev, current) =>
-//         new Date(current.endDate) > new Date(prev.endDate) ? current : prev
-//       );
-
-//     // Calculate the new values for endDate, startDate, and amount
-//     const newEndDate = new Date().toISOString();
-//     const newStartDate = userTrackingEntry.endDate;
-//     const newAmount = tracking.amountFetched - userTrackingEntry.amountFetched;
-
-//     // Insert a new row into the user_tracking table
-//     const insertQuery =
-//       "INSERT INTO user_tracking (userId, startDate, endDate, amountFetched) VALUES ($1, $2, $3, $4)";
-//     const values = [userId, newStartDate, newEndDate, newAmount];
-
-//     db.query(insertQuery, values, (err, data) => {
-//       if (err) return res.status(500).json(err);
-//       console.log("user tracking updated succesfuly");
-//     });
-//   });
-// };
 
 // const userTrackingData = [
 //   { userId: 1, startDate: '2023-04-01', endDate: '2023-04-15', amountFetched: 50 },
@@ -420,4 +378,3 @@ module.exports = {
 //   { userId: 2, startDate: '2023-04-30', endDate: '2023-04-02', amountFetched: 60 },
 //   // ...more entries
 // ];
-

@@ -9,12 +9,12 @@ import Sidebar from "./scenes/global/Sidebar";
 import Dashboards from "./scenes/dashboard/Dashboards";
 import Team from "./scenes/team/Team";
 import Contacts from "./scenes/contacts/Contacts";
-import Invoices from "./scenes/invoices/Invoices";
 import Calendar from "./scenes/calender/Calendar";
 import Register  from "./scenes/register/Register";
-import Land from "./landingpage/Land";
+import Login from "./components/loginpage/Login";
 import { AuthContext } from "./context/authContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Users from "./scenes/usertable/Users";
 
 import {
   createBrowserRouter,
@@ -22,7 +22,6 @@ import {
   Outlet,
   Navigate,
 } from "react-router-dom";
-import Login from "./landingpage/Login";
 import UserPage from "./useInterface/UserPage";
 const App = () => {
   const [isTokenValid, setIsTokenValid] = useState(false)
@@ -82,7 +81,7 @@ const App = () => {
     </colorModeContext.Provider>
     )
   // </QueryClientProvider>
-  }
+  } 
   const ProtectedRoue = ({ children }) => {
     if (!currentUser || !isTokenValid || currentUser.role != "admin") {
       return <Navigate to="/login" />;
@@ -99,10 +98,6 @@ const App = () => {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Land />,
-    },
-    {
-      path: "/admin",
       element: (
         <ProtectedRoue>
           <Layout />
@@ -110,24 +105,28 @@ const App = () => {
       ),
       children: [
         {
-          path: "/admin",
+          path: "/",
           element: <Dashboards />,
         },
         {
-          path: "/admin/calander",
+          path: "/calander",
           element: <Calendar />,
         },
         {
-          path: "/admin/contacts",
+          path: "/contacts",
           element: <Contacts />,
         },
         {
-          path: "/admin/team",
+          path: "/team",
           element: <Team />,
         },
         {
-          path: "/admin/register",
+          path: "/register",
           element:<Register />
+        },
+        {
+          path: "/table",
+          element:<Users/>
         }
       ],
     },
@@ -165,3 +164,13 @@ const App = () => {
 export default App;
 
 
+// import React from 'react'
+// import Donate from './components/Donate'
+// const App = () => {
+//   return (
+//     <div>
+//       <Donate />
+//     </div>
+//   )
+// }
+// export default App

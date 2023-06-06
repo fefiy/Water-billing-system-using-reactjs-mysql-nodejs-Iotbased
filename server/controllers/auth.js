@@ -146,6 +146,7 @@ const logout = (req, res) => {
 const accessToken = (req, res) => {
   console.log(" aceess token iw=s working");
   const token = req.cookies.accessToken;
+  console.log("token", token)
   if (!token) {
     res.json({ isTrue: false });
   } else {

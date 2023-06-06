@@ -304,7 +304,7 @@ ul.social li{
           	<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
           		<tr>
           			<td class="logo" style="text-align: left;">
-			            <h1><img width="60px" src="./images/logo.png" /></h1>
+			            <h1><img width="60px" src="cid:logo" /></h1>
 			          </td>
           		</tr>
           	</table>
@@ -317,9 +317,8 @@ ul.social li{
             		<td style="padding: 0 2.5em; text-align: left;">
             			<div class="text">
             				<h3> Dear <%= name %> </h3>
-            				<p>We hope this email finds you well. We are writing to remind you about the upcoming payment for your water services. As per our records, the payment for the water services provided to your premises is due on [Due Date].</p>
-                           <p>To ensure uninterrupted water supply and maintain a smooth relationship, we kindly request you to make the payment as soon as possible. The amount due for this billing cycle is <%= endDate %></p>
-
+            				<p>We hope this email finds you well. We are writing to remind you about the upcoming payment for your water services. As per our records, the payment for the water services provided to your premises is due on <%= endDate %></p> .</p>
+                           <p>To ensure uninterrupted water supply and maintain a smooth relationship, we kindly request you to make the payment as soon as possible. The amount due for this billing cycle is <%= price %> birr</p>
             			</div>
             		</td>
             	</tr>
