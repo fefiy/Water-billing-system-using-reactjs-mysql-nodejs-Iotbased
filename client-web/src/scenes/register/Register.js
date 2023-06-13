@@ -12,7 +12,8 @@ const Register = () => {
   ];
 
   const [inputs, setInputs] = useState({
-    name: "",
+    first_name: "",
+    last_name:"",
     email: "",
     password: "",
     mac: "",
@@ -33,7 +34,7 @@ const Register = () => {
     e.preventDefault();
     try{
       await makeRequest.post("/register" ,inputs)
-      navigate("/admin");
+      navigate("/");
     }catch(err){
      setErr(err)
       console.log(err)
@@ -104,12 +105,18 @@ const Register = () => {
         ) : (
           <>
             <div className="form-right">
-              <input
-                name="name"
-                value={inputs.name}
+            <input
+                name="first_name"
+                value={inputs.first_name}
                 onChange={handlechange}
-                placeholder="Name"
+                placeholder="First Name"
               />
+              <input
+              name="last_name"
+              value={inputs.last_name}
+              onChange={handlechange}
+              placeholder="Last Name"
+            />
               <input
                 type="email"
                 name="email"

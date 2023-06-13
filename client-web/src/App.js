@@ -7,7 +7,6 @@ import React from "react";
 import Topbar from "../src/scenes/global/Topbar";
 import Sidebar from "./scenes/global/Sidebar";
 import Dashboards from "./scenes/dashboard/Dashboards";
-import Team from "./scenes/team/Team";
 import Contacts from "./scenes/contacts/Contacts";
 import Calendar from "./scenes/calender/Calendar";
 import Register  from "./scenes/register/Register";
@@ -23,11 +22,11 @@ import {
   Navigate,
 } from "react-router-dom";
 import UserPage from "./useInterface/UserPage";
+import EditUserModal from "./scenes/profileUpdate/EditUserModal";
 const App = () => {
   const [isTokenValid, setIsTokenValid] = useState(false)
   const {currentUser } = useContext(AuthContext)
   const queryClient = new QueryClient();
-
   useEffect(() => {
     async function fetchData() {
       try {
@@ -43,6 +42,7 @@ const App = () => {
     fetchData();
   }, []);
 
+  console.log("token", isTokenValid)
 
   const Layout = () => {
     return (
@@ -83,18 +83,13 @@ const App = () => {
   // </QueryClientProvider>
   } 
   const ProtectedRoue = ({ children }) => {
-    if (!currentUser || !isTokenValid || currentUser.role != "admin") {
+    if (!currentUser  || currentUser.role != "admin") {
       return <Navigate to="/login" />;
     }
     return children;
   };
 
-  const ProtectedRoueUser = ({children})=>{
-    if (!currentUser || !isTokenValid || currentUser.role != "user") {
-      return <Navigate to="/login" />;
-    }
-    return children;
-  }
+ 
   const router = createBrowserRouter([
     {
       path: "/",
@@ -117,39 +112,24 @@ const App = () => {
           element: <Contacts />,
         },
         {
-          path: "/team",
-          element: <Team />,
-        },
-        {
           path: "/register",
           element:<Register />
         },
         {
           path: "/table",
           element:<Users/>
-        }
+        },
+        {
+          path: "/updateuser/:id",
+          element: <EditUserModal />,
+        },
       ],
     },
     {
       path:"/login",
       element:<Login />
     },
-    {
-      path:"/user",
-      element:(
-        <ProtectedRoueUser>
-          <LayoutUser />
-        </ProtectedRoueUser>
-      ),
-      children:[
-        {
-          path:"/user",
-          element: <UserPage/>
-        }
-
-      ]
-
-    }
+    
   ]);
 
   const [theme, colorMode] = useMode();

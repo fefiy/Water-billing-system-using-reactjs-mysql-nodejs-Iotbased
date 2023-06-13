@@ -1,7 +1,6 @@
 import { Box } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import { mockDataContacts } from "../../data/Mockdata";
 import Header from "../../components/Header";
 import { useTheme } from "@mui/material";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
@@ -11,15 +10,17 @@ import { Modal, Form } from "react-bootstrap";
 import { useState , useContext} from "react";
 import Swal from "sweetalert2";
 import { AuthContext } from "../../context/authContext";
-import EditUserModal from "../profileUpdate/EditUserModal";
-import Update from "../updates/Update";
+import { useNavigate } from "react-router-dom";
+
 
 const Contacts = () => {
+  const navigate = useNavigate()
   const queryClient = useQueryClient();
   const theme = useTheme();
   const { currentUser} = useContext(AuthContext)
   const colors = tokens(theme.palette.mode);
-  const [showModal, setShowModal] = useState(false)
+  const [updataUser, setUpdateUser] = useState(null)
+  
   const { isLoading, error, data } = useQuery(["alluser"], () =>
     makeRequest.get("/users").then((res) => {
       return res.data;
@@ -57,8 +58,17 @@ const Contacts = () => {
     });
   };
 
-  const handleUpdate = (id)=>{
-     setShowModal(true)
+  const handleUpdate = async(id)=>{
+    console.log(id, "update is clicked")
+     try{
+      const response =  await makeRequest.get("/update/"+id)
+        setUpdateUser(response.data)
+        console.log(response.data)
+        console.log("updateUser",updataUser)
+        navigate(`/updateuser/${id}`)
+     }catch(err){
+      console.log(err)
+     }
   }
   console.log(data);
   console.log(error)
@@ -124,9 +134,9 @@ const Contacts = () => {
     },
   ];
 
+
   return (
     <>
-    {showModal && <Update user={currentUser} showModal={showModal} setShowModal={setShowModal} />}
       {isLoading ? (
         <h3>Loading</h3>
       ) : (

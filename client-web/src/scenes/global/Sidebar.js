@@ -11,6 +11,7 @@ import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import {AuthContext} from "../../context/authContext"
+import WaterIcon from '@mui/icons-material/Water';
 
 
 
@@ -120,13 +121,6 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
             <Item
-              title="Water Amount"
-              to="/team"
-              icon={<PeopleOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
               title="Contacts Information"
               to="/contacts"
               icon={<ContactsOutlinedIcon />}
@@ -135,7 +129,7 @@ const Sidebar = () => {
             />
             
             <Item
-              title="Profile Form"
+              title="Register user"
               to="/register"
               icon={<PersonOutlinedIcon />}
               selected={selected}
@@ -149,9 +143,9 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
             <Item
-              title="tableData"
+              title="Water Data info"
               to="/table"
-              icon={<CalendarTodayOutlinedIcon />}
+              icon={<WaterIcon />}
               selected={selected}
               setSelected={setSelected}
             />
