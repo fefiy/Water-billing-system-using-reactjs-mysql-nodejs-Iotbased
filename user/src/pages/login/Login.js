@@ -33,22 +33,17 @@ const {login, currentUser} = useContext(AuthContext)
   }
   return (
     <div className="login">
-      <div className="card">
+      <div className="Card">
         <div className="left">
-          <h1>Hello world</h1>
+          <h1></h1>
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur
+          Welcome to our Water Consumption Monitoring and Billing System! Please log in to access your account and manage your water consumption and billing details
           </p>
         </div>
         <div className="right">
           <h1>Login</h1>
           <form>
-            <input type="text" name="mac" onChange={handleChange} placeholder="mac" />
+            <input type="text" name="mac" onChange={handleChange} placeholder="Mac Address" />
             <input type="password" name="password" onChange={handleChange} placeholder="Password" />
             <button onClick={handelLogin}>login</button>
           </form>

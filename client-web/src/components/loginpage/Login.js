@@ -35,7 +35,7 @@ const {login, currentUser} = useContext(AuthContext)
   return (
     <div className="login">
       <div className="cardss">
-        <div className="left">
+        {/* <div className="left">
           <h1>Hello world</h1>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
@@ -45,13 +45,13 @@ const {login, currentUser} = useContext(AuthContext)
             reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
             pariatur
           </p>
-        </div>
+        </div> */}
         <div className="right">
-          <h1>Login</h1>
+          <h1 style={{textAlign:"center"}}>Admin Login</h1>
           <form>
-            <input type="text" name="mac" onChange={handleChange} placeholder="mac" />
+            <input type="text" name="mac" onChange={handleChange} placeholder="User Name" />
             <input type="password" name="password" onChange={handleChange} placeholder="Password" />
-            <button onClick={handelLogin}>login</button>
+            <button style={{width:"100%"}} onClick={handelLogin}>login</button>
           </form>
           {err&& <div style={{color:"red"}}>{err}</div>}
         </div>

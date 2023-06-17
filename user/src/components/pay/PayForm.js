@@ -6,7 +6,7 @@ const PayForm = ({fname, lname, email, public_key, amount,tx_ref,  track_id}) =>
         user_id: userId,
         tx_ref: tx_ref
       }
- 
+  
   return (
     <>
       <form method="POST" action="https://api.chapa.co/v1/hosted/pay">
@@ -40,7 +40,7 @@ const PayForm = ({fname, lname, email, public_key, amount,tx_ref,  track_id}) =>
           value="http://localhost:3001"
         />
         <input type="hidden" name="meta[title]" value="test" />
-        <button type="submit" >Pay Now</button>
+        <button type="submit"  className="btn btn-info">Pay Now</button>
       </form>
     </>
   );

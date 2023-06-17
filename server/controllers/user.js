@@ -49,13 +49,48 @@ const singleUser = (req, res)=>{
    })
 }
 
+const getUserUpdatedata = (req, res)=>{
+ const id = req.params.id
+ const q = `SELECT * FROM users WHERE id = ${id} `
 
+ db.query(q, (err, data)=>{
+  if(err) return res.status(500).josn(err)
+  return res.status(200).json(data[0])
+ })
+}
 // water usage total to show how much eskezare kefeele price
+
+
+const updateUser = (req, res) => {
+  console.log("updateUser is called");
+  const id = req.body.id;
+  console.log(id);
+  console.log(req.body);
+  const { first_name, last_name, email, phone, mac, region, zone, wereda } = req.body;
+  const q = `UPDATE users SET 
+    first_name = '${first_name}',
+    last_name = '${last_name}',
+    phone = '${phone}',
+    mac_address = '${mac}',
+    email = '${email}',
+    region = '${region}',
+    zone = '${zone}',
+    address = '${wereda}'
+    WHERE id = ${id}`;
+  db.query(q, (err, data) => {
+    if (err) return res.status(500).json(err);
+    return res.status(200).json("User updated successfully");
+  });
+};
+
+
 
 
 
 module.exports = {
   softDeleteRecord,
   getAllusersinfo,
-  singleUser
+  singleUser,
+  getUserUpdatedata,
+  updateUser
 };

@@ -43,8 +43,8 @@ const Register = () => {
   console.log(inputs)
 
   return (
-    <div>
-      <Header title="CREATE USER" subtitle="Create a New User Profile" />
+    <div style={{margin:"0px 10px"}}>
+      <Header  title="Register User"/>
       <div className="form">
         {inputs.role_id ==2 ? (
           <>

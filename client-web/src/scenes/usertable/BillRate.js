@@ -58,12 +58,12 @@ const BillRate = () => {
   return (
     <Box display={"flex"} alignItems={"center"} gap={"40px"} justifyContent="center">
       <Box>
-        <p>price per litter:- {data?.priceperlitter}</p>
-        <p>fixed rate:- {data?.state_tax}</p>
+        <h5> Price Per Litter :- {data?.priceperlitter}</h5>
+        <h5>Fixed Tax :- {data?.state_tax}</h5>
       </Box>
       <Box>
         <button className="btn btn-info" onClick={showUpdateAlert}>
-          update bill
+          update tariff
         </button>
       </Box>
     </Box>

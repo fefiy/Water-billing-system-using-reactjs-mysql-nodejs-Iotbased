@@ -3,6 +3,8 @@ const cors = require('cors')
 const helmet = require("helmet")
 const cookieParser = require("cookie-parser")
 require('dotenv').config();
+// const { Board, Led } = require('johnny-five');
+// const board = new Board();
 const app = express()
 app.use(express.json());
 app.use(cookieParser()) 
@@ -17,7 +19,12 @@ app.use((req, res, next) => {
       origin:true,
     })
   );
-//  import routes
+
+ // Use the appropriate digital pin number
+
+  // Define API endpoint to control the solenoid valve
+  
+//  import routes//
 const authRouter = require("./routes/auth")
 const userRouter = require("./routes/user")
 const waterRouter = require("./routes/water")
@@ -27,7 +34,7 @@ app.use("/api", authRouter)
 app.use("/api", userRouter)
 app.use("/api", waterRouter)
 app.use("/api", payRouter)
-
+// 
 app.listen(3004 , ()=>{
     console.log("app is connected on 3004")
 })

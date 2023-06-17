@@ -21,8 +21,8 @@ import {
   Outlet,
   Navigate,
 } from "react-router-dom";
-import UserPage from "./useInterface/UserPage";
 import EditUserModal from "./scenes/profileUpdate/EditUserModal";
+import WaterAmount from "./scenes/waterTotalAmount/WaterAmount";
 const App = () => {
   const [isTokenValid, setIsTokenValid] = useState(false)
   const {currentUser } = useContext(AuthContext)
@@ -122,6 +122,10 @@ const App = () => {
         {
           path: "/updateuser/:id",
           element: <EditUserModal />,
+        }, 
+        {
+          path: "/totalAmount",
+          element: <WaterAmount/>,
         },
       ],
     },
@@ -143,14 +147,3 @@ const App = () => {
 
 export default App;
 
-
-// import React from 'react'
-// import Donate from './components/Donate'
-// const App = () => {
-//   return (
-//     <div>
-//       <Donate />
-//     </div>
-//   )
-// }
-// export default App

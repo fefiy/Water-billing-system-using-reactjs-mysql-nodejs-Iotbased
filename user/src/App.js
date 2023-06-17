@@ -12,26 +12,12 @@ import {
   Navigate,
 } from "react-router-dom";
 import Home from "./pages/home/Home";
-import PaymentHistory from "./pages/paymenthistory/PaymentHistory";
 
 function App() {
-  const [isTokenValid, setIsTokenValid] = useState(false)
+  // const [isTokenValid, setIsTokenValid] = useState(false)
   const { currentUser } = useContext(AuthContext);
   const queryClient = new QueryClient();
-  useEffect(() => {
-    console.log("useEffect Calleded")
-    async function fetchData() {
-      try {
-        console.log("access is fetching")
-        const response = await makeRequest.get("/autenticate");
-        console.log("tokeV", response.data)
-        setIsTokenValid(response.data)
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    fetchData();
-  }, []);
+  
   const Layout = () => {    
     return (
       <QueryClientProvider client={queryClient}>
@@ -44,10 +30,10 @@ function App() {
       </QueryClientProvider>
     );
   };
-  console.log(isTokenValid)
+  // console.log(isTokenValid)
   console.log(currentUser)
   const ProtectedRoue = ({ children }) => {
-    if (!currentUser || !isTokenValid || currentUser.role != "user") {
+    if (!currentUser || currentUser.role != "user") {
       return <Navigate to="/login" />;
     }
     return children;
@@ -65,10 +51,6 @@ function App() {
           path:"/",
           element:(<Home/>)
         },
-        {
-          path:"/history",
-          element:(<PaymentHistory/>)
-        }
       ],
     },
     {

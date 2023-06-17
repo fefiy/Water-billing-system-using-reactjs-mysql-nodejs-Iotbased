@@ -31,28 +31,31 @@ const Home = () => {
   //     return res.data;
   //   })
   // );
-  
+  const convertDate = (data)=>{
+    const dates= new Date(data)
+    return dates.toLocaleDateString()
+  }
   
   console.log(currentUser)
   return (
-    <div className="container">
-      <div className="card">
-        <div className="card-body">
-          <div className="table-responsive">
-            <table className="table">
+    <div className="Container">
+      <div className="Card">
+        <div className="Card-body">
+          <div className="Table-responsive">
+            <table className="Table">
               <thead>
                 <tr>
                   {/* <!-- Set columns width --> */}
-                  <th className="text-center" style={{ minWidth: "400px" }}>
+                  <th className="Text-center" style={{ minWidth: "400px" }}>
                     date(mont)
                   </th>
-                  <th className="text-right" style={{ minWidth: "160px" }}>
+                  <th className="Text-right" style={{ minWidth: "160px" }}>
                     Total liter
                   </th>
-                  <th className="text-center" style={{ minWidth: "120px" }}>
+                  <th className="Text-center" style={{ minWidth: "120px" }}>
                    price
                   </th>
-                  <th className="text-right" style={{ minWidth: "160px" }}>
+                  <th className="Text-right" style={{ minWidth: "160px" }}>
                    actions
                   </th>
                 </tr>
@@ -68,7 +71,7 @@ const Home = () => {
                       <td>
                         <div className="media">
                           <div className="media-body">
-                            <h4 className="text-dark">{signledata.start_date}-{signledata.end_date}</h4>
+                            <h4 className="Text-dark">{convertDate(signledata.start_date)} - {convertDate(signledata.end_date)}</h4>
                           </div>
                         </div>
                       </td>
@@ -76,8 +79,7 @@ const Home = () => {
                       <td className="text-right">{signledata.price}</td>
                       {signledata.status === "success"? <td>
                          
-                          <button disabled>Already paid</button>
-                         my name is fewzya yimam  
+                          <button disabled className="btn btn-success" style={{margin:"0px 0px 0px 25px"}} >Already paid</button>
                       </td>: (  <td className="text-center">
                         <PayForm 
                          lname={signledata.last_name}

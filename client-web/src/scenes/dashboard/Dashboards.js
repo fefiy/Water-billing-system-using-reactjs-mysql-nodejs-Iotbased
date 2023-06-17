@@ -1,46 +1,73 @@
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
-// import { mockTransactions } from "../../data/mockData";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import EmailIcon from "@mui/icons-material/Email";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import TrafficIcon from "@mui/icons-material/Traffic";
 import Header from "../../components/Header";
-// import LineChart from "../../components/LineChart";
-// import GeographyChart from "../../components/GeographyChart";
-// import BarChart from "../../components/BarChart";
- import StatBox from "../../components/StatBox";
-// import ProgressCircle from "../../components/ProgressCircle";
-
+import StatBox from "../../components/StatBox";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { makeRequest } from "../../axios";
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import PaidIcon from '@mui/icons-material/Paid';
+import WaterIcon from '@mui/icons-material/Water';
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
+  const { isLoading: paymentLoading, error: paymentError, data: paymentData } = useQuery(["allPayment"], () =>
+  makeRequest.get("/totalpayment").then((res) => {
+    return res.data;
+  })
+);
+
+const { isLoading: userLoading, error: userError, data: userData } = useQuery(["allUsers"], () =>
+  makeRequest.get("/users").then((res) => {
+    return res.data;
+  })
+);
+
+const { isLoading: waterLoading, error: waterError, data: waterData } = useQuery(["allWater"], () =>
+  makeRequest.get("/totalwater").then((res) => {
+    return res.data;
+  })
+);
+
+const totalpayment = ()=>{
+  let total = 0
+   for(let i= 0; i <paymentData.length; i++){
+      total = total+paymentData[i].amount_paid
+   }
+   return total
+}
+const totalUsers = ()=>{
+  return userData.length
+}
+const totalLitter = ()=>{
+  let total = 0;
+  for(let i= 0; i < waterData.length; i++){
+    total = total+ waterData[i].amount
+  }
+  return total
+}
+
+console.log(waterData)
+
+ 
 
   return (
     <Box m="20px">
       {/* HEADER */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Header title="DASHBOARD" subtitle="Welcome to your dashboard" />
-
-        <Box>
-          <Button
-            sx={{
-              backgroundColor: colors.blueAccent[700],
-              color: colors.grey[100],
-              fontSize: "14px",
-              fontWeight: "bold",
-              padding: "10px 20px",
-            }}
-          >
-            <DownloadOutlinedIcon sx={{ mr: "10px" }} />
-            Download Reports
-          </Button>
-        </Box>
       </Box>
 
-      {/* GRID & CHARTS */}
-      <Box
+         {
+          userLoading || waterLoading || paymentLoading ? 
+             <div> Loading </div>
+          :(
+            <Box
         display="grid"
         gridTemplateColumns="repeat(12, 1fr)"
         gridAutoRows="140px"
@@ -55,13 +82,11 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="12,361"
-            subtitle="Emails Sent"
-            progress="0.75"
-            increase="+14%"
+            title={totalUsers()}
+            subtitle="Total Users"
             icon={
-              <EmailIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+              <PeopleAltIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "30px" }}
               />
             }
           />
@@ -74,13 +99,11 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="431,225"
-            subtitle="Sales Obtained"
-            progress="0.50"
-            increase="+21%"
+            title={`${totalLitter()} Liter`}
+            subtitle="Total water fetched "
             icon={
-              <PointOfSaleIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+              <WaterIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "30px" }}
               />
             }
           />
@@ -93,18 +116,17 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="32,441"
-            subtitle="New Clients"
+            title={`${totalpayment()} ETH birr`}
+            subtitle="Total payment maded through users"
             progress="0.30"
             increase="+5%"
             icon={
-              <PersonAddIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+              <PaidIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "30px" }}
               />
             }
           />
         </Box>
-        
 
         {/* ROW 2 */}
         <Box
@@ -167,6 +189,8 @@ const Dashboard = () => {
           </Box>
         </Box>
       </Box>
+          )
+         }
     </Box>
   );
 };

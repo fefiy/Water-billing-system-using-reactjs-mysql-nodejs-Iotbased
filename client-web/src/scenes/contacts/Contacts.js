@@ -11,6 +11,8 @@ import { useState , useContext} from "react";
 import Swal from "sweetalert2";
 import { AuthContext } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 
 
 const Contacts = () => {
@@ -79,7 +81,13 @@ const Contacts = () => {
       field: "name",
       headerName: "Name",
       flex: 1,
-      cellClassName: "name-column--cell",
+      valueGetter: (params) =>
+        `${params.row.first_name} ${params.row.last_name}`,
+      renderCell: (params) => (
+        <div style={{ textTransform: "capitalize" }}>
+          {`${params.row.first_name} ${params.row.last_name}`}
+        </div>
+      ),
     },
     {
       field: "phone",
@@ -104,14 +112,14 @@ const Contacts = () => {
     {
       field: "delte",
       headerName: "Delete",
-      width: 50,
+      width: 80,
       renderCell: (params) => {
         return (
             <div
-              className="deleteButton"
+              className="btn btn-danger"
               onClick={() => handleDelete(params.row.id)}
             >
-              Delete
+             <DeleteIcon />
             </div>
         );
       },
@@ -120,14 +128,14 @@ const Contacts = () => {
     {
       field: "edit",
       headerName: "Edit",
-      width: 50,
+      width: 80,
       renderCell: (params) => {
         return (
             <div
-              className="viewButton"
+              className="btn btn-primary"
               onClick={() => handleUpdate(params.row.id)}
             >
-              Edit
+              <EditIcon />
             </div>
         );
       },
@@ -140,13 +148,13 @@ const Contacts = () => {
       {isLoading ? (
         <h3>Loading</h3>
       ) : (
-        <Box m="20px">
+        <Box m="10px">
           <Header
-            title="CONTACTS"
-            subtitle="List of Contacts for Future Reference"
+            title="List of Users"
+            // subtitle="List of Contacts for Future Reference"
           />
           <Box
-            m="40px 0 0 0"
+            m="20px 0 0 0"
             height="75vh"
             sx={{
               "& .MuiDataGrid-root": {

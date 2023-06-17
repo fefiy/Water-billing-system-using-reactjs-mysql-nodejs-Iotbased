@@ -46,10 +46,11 @@ const register = (req, res) => {
       const hashedPassword = bcrypt.hashSync(req.body.password, salt);
 
       const q =
-        "INSERT INTO users (`name`,`email`,`password`, `mac_address`,`phone`, `address`, `region`, `zone` ) VALUE (?)";
+        "INSERT INTO users (`first_name`, `last_name`,`email`,`password`, `mac_address`,`phone`, `address`, `region`, `zone` ) VALUE (?)";
 
       const values = [
-        req.body.name,
+        req.body.first_name,
+        req.body.last_name,
         req.body.email,
         hashedPassword,
         req.body.mac,
@@ -58,7 +59,6 @@ const register = (req, res) => {
         req.body.region,
         req.body.zone,
       ];
-
       console.log(values);
 
       db.query(q, [values], (err, data) => {

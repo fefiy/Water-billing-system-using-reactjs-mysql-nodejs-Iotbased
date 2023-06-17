@@ -12,6 +12,7 @@ import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import {AuthContext} from "../../context/authContext"
 import WaterIcon from '@mui/icons-material/Water';
+import PaymentsIcon from '@mui/icons-material/Payments';
 
 
 
@@ -98,14 +99,18 @@ const Sidebar = () => {
               </Box>
               <Box textAlign="center">
                 <Typography
-                  variant="h2"
+                  variant="h3"
                   color={colors.grey[100]}
                   fontWeight="bold"
-                  sx={{ m: "10px 0 0 0" }}
+                  sx={{ m: "10px 0" }}
                 >
                   {currentUser.name}
                 </Typography>
-                <Typography variant="h5" color={colors.greenAccent[500]}>
+                <Typography variant="h5"
+                 color={colors.greenAccent[500]}
+                 fontWeight="bold"
+                 sx={{ m: "17px 0" }}
+                 >
                   {currentUser.role}
                 </Typography>
               </Box>
@@ -135,17 +140,25 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-            <Item
-              title="Calendar"
-              to="/calander"
-              icon={<CalendarTodayOutlinedIcon />}
+             <Item
+              title="monthly bill & payment "
+              to="/table"
+              icon={<PaymentsIcon />}
               selected={selected}
               setSelected={setSelected}
             />
+          
             <Item
-              title="Water Data info"
-              to="/table"
+              title="Total Amount Water"
+              to="/totalamount"
               icon={<WaterIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+              <Item
+              title="Calendar"
+              to="/calander"
+              icon={<CalendarTodayOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />

@@ -10,7 +10,7 @@
   }
   .login .cardss {
     display: flex;
-    width: 50%;
+    width: 40%;
     border-radius: 10px;
     background-color: white;
     min-height: 500px;
@@ -33,7 +33,7 @@
     text-transform: capitalize;
   }
   .login .cardss .left span {
-    font-size: 14px;
+    font-size: 14px
   }
   .login .cardss .left button {
     background-color: white;
@@ -66,9 +66,13 @@
     border-bottom: 1px solid lightgray;
     padding: 20px 10px;
   }
+  .login .cardss .right form input::placeholder{
+    color:black;
+    font-weight:bold;
+  }
   .login .cardss .right form button {
     background-color: white;
-    width: 50%;
+    width: 40%;
     padding: 10px;
     background-color: rgb(160, 106, 210);
     color: white;
