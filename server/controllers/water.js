@@ -16,10 +16,19 @@ const getAmount = (req, res) => {
     return res.status(200).json(data);
   });
 };
+const singleTotalWater = (req, res)=>{
+  console.log("singlge water is calded")
+  const id = req.params.id
+  const q = `SELECT * from waterusage WHERE user_id = ${id}`
+  db.query(q, (err, data)=>{
+    if(err) return res.status(500).json(err)
+    return res.status(200).json(data)
+  })
+}
 
 const waterTotalAmount = (req, res) => {
   console.log("tottal water is callded")
-  const q = "SELECT * From waterusage";
+  const q = "SELECT * From waterusage as w JOIN users as u ON(w.user_id=u.id)";
   db.query(q, (err, data) => {
     if (err) return res.status(500).json(err);
     return res.status(200).json(data);
@@ -36,13 +45,13 @@ const allPaymentStatus = (req, res) => {
 };
 
 const getAllUsertakingrecords = (req, res)=>{
+  console.log("tracking is calleded")
   const q = "SELECT * FROM usertracking"
   db.query(q, (err, data)=>{
     if(err) return res.status(500).json(err)
     return res.status(200).json(data)
   })
 }
-
 const updateWaterState = (req, res) => {
   console.log("update water state is callded");
   const id = req.params.id;
@@ -462,7 +471,7 @@ const waterRate = (req, res) => {
 
 const getWaterRate = (req, res) => {
   const q = "SELECT * FROM billrate";
-  db.query(q, (err, data) => {
+  db.query(q, (err, data) => {      
     if (err) return res.status(500).json(err);
     return res.status(200).json(data[0]);
   });
@@ -497,6 +506,8 @@ module.exports = {
   waterTotalAmount,
   updateWaterState,
   getWaterState,
+  getAllUsertakingrecords,
+  singleTotalWater
 };
 
 // const userTrackingData = [

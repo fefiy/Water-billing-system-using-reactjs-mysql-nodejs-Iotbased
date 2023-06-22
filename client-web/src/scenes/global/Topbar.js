@@ -9,12 +9,24 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 import LogoutIcon from '@mui/icons-material/Logout';
+import {useNavigate} from "react-router-dom"
+import { makeRequest } from "../../axios";
 
 const Topbar = () => {
+  const navigate = useNavigate()
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(colorModeContext);
   
+  const onClickLogout = async()=>{
+    console.log("log out is clicked")
+    try{
+    await makeRequest.post("/logout")
+    navigate("/login")
+    }catch(err){
+     console.log(err)
+    }
+  }
   return (
     <Box display="flex" justifyContent="space-between" p={2}>
       {/* SEARCH BAR */}
@@ -37,7 +49,7 @@ const Topbar = () => {
         <IconButton>
           <SettingsOutlinedIcon />
         </IconButton>
-        <IconButton>
+        <IconButton onClick={onClickLogout}>
           <LogoutIcon fontSize="17"/>
         </IconButton>
       </Box>

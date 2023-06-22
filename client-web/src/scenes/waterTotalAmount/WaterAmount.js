@@ -26,6 +26,7 @@ const WaterAmount = () => {
     })
   );
   
+
  
   const columns = [
     { field: "id", headerName: "ID", flex: 0.5 },
@@ -94,7 +95,7 @@ const WaterAmount = () => {
             <DataGrid
               rows={data}
               columns={columns}
-              components={{ Toolbar: GridToolbar }}
+              // components={{ Toolbar: GridToolbar }}
             />
           </Box>
         </Box>

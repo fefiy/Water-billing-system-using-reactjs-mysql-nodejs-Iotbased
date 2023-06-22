@@ -1,5 +1,6 @@
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
+import { useState } from "react";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import EmailIcon from "@mui/icons-material/Email";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
@@ -12,6 +13,8 @@ import { makeRequest } from "../../axios";
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import PaidIcon from '@mui/icons-material/Paid';
 import WaterIcon from '@mui/icons-material/Water';
+import LineBar from "../../components/LineBar"
+import BarChart from "../../components/BarChart";
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -21,7 +24,11 @@ const Dashboard = () => {
     return res.data;
   })
 );
-
+const { isLoading: trackingLoading, error: trackingError, data: trackingData } = useQuery(["allMonth"], () =>
+  makeRequest.get("/watertrackingraph").then((res) => {
+    return res.data;
+  })
+);
 const { isLoading: userLoading, error: userError, data: userData } = useQuery(["allUsers"], () =>
   makeRequest.get("/users").then((res) => {
     return res.data;
@@ -33,7 +40,22 @@ const { isLoading: waterLoading, error: waterError, data: waterData } = useQuery
     return res.data;
   })
 );
+const reduceData = trackingData? trackingData.reduce((acc, current) => {
+  let i =0;
+  const { end_date, month_amount } = current;
+  const existingRecord = acc.find((item) => item.end_date === end_date);
 
+  if (existingRecord) {
+    existingRecord.amount += month_amount;
+  } else {
+    i = i+1
+    acc.push({ id:i, end_date, amount:month_amount });
+  }
+
+  return acc;
+}, []):[];
+
+// console.log("reduced  data", reduceData)
 const totalpayment = ()=>{
   let total = 0
    for(let i= 0; i <paymentData.length; i++){
@@ -52,7 +74,30 @@ const totalLitter = ()=>{
   return total
 }
 
+const [chartData, setChartData] = useState({
+  labels: reduceData.map((data) => data.end_date),
+  datasets: [
+    {
+      label: "Users Gained",
+      data: reduceData.map((data) => data.amount),
+      backgroundColor: [
+        colors.grey[500],
+        // "#ecf0f1",
+        // "#50AF95",
+        // "#f3ba2f",
+        // "#2a71d0",
+      ],
+      borderColor: "black",
+      borderWidth: 2,
+    },
+  ],
+});
 console.log(waterData)
+
+console.log("TrackingData",trackingData)
+console.log("refucedData", reduceData)
+// tracking   
+
 
  
 
@@ -61,18 +106,20 @@ console.log(waterData)
       {/* HEADER */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Header title="DASHBOARD" subtitle="Welcome to your dashboard" />
-      </Box>
+      </Box >
 
          {
-          userLoading || waterLoading || paymentLoading ? 
+          userLoading || waterLoading || paymentLoading || trackingLoading? 
              <div> Loading </div>
           :(
             <Box
+            
         display="grid"
         gridTemplateColumns="repeat(12, 1fr)"
         gridAutoRows="140px"
         gap="20px"
       >
+      
         {/* ROW 1 */}
         <Box
           gridColumn="span 4"
@@ -127,67 +174,7 @@ console.log(waterData)
             }
           />
         </Box>
-
-        {/* ROW 2 */}
-        <Box
-          gridColumn="span 8"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-        >
-          <Box
-            mt="25px"
-            p="0 30px"
-            display="flex "
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Box>
-              <Typography
-                variant="h5"
-                fontWeight="600"
-                color={colors.grey[100]}
-              >
-                Revenue Generated
-              </Typography>
-              <Typography
-                variant="h3"
-                fontWeight="bold"
-                color={colors.greenAccent[500]}
-              >
-                $59,342.32
-              </Typography>
-            </Box>
-            <Box>
-              <IconButton>
-                <DownloadOutlinedIcon
-                  sx={{ fontSize: "26px", color: colors.greenAccent[500] }}
-                />
-              </IconButton>
-            </Box>
-          </Box>
-          <Box height="250px" m="-20px 0 0 0">
-            {/* <LineChart isDashboard={true} /> */}
-          </Box>
-        </Box>
-        <Box
-          gridColumn="span 4"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-          overflow="auto"
-        >
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            borderBottom={`4px solid ${colors.primary[500]}`}
-            colors={colors.grey[100]}
-            p="15px"
-          >
-            <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
-              Recent Transactions
-            </Typography>
-          </Box>
-        </Box>
+       {/* Row 3 */}
       </Box>
           )
          }
