@@ -1,11 +1,8 @@
 const mysql = require("mysql");
-
-const db = mysql.createConnection({
-  host:"localhost",
-  user:"root",
-  password:"",
-  database:"water-managment"
-})
+const dotenv = require("dotenv");
+dotenv.config();
+const urlDb = `mysql://${process.env.MYSQLUSER}:${process.env.MYSQLPASSWORD}@${process.env.MYSQLHOST}:${process.env.MYSQLPORT}/${process.env.MYSQLDATABASE}`;
+const db = mysql.createConnection(urlDb);
 
 db.connect((err) => {
   if (err) {
@@ -15,4 +12,4 @@ db.connect((err) => {
   console.log("Connected to the database");
 });
 
-module.exports = db
+module.exports = db;

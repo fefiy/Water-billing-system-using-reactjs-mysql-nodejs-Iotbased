@@ -506,8 +506,6 @@ const waterAmountUpdate = (req, res) => {
   });
 };
 
-
-
 module.exports = {
   getAmount,
   temp,
