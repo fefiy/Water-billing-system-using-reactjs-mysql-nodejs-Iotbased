@@ -10,7 +10,8 @@ const {
   updateWaterState,
   getWaterState,
   getAllUsertakingrecords,
-  singleTotalWater
+  singleTotalWater,
+  waterAmountUpdate
 } = require("../controllers/water");
 
 router.get("/waterusage", getAmount);
@@ -24,5 +25,6 @@ router.post("/updatewaterstate/:id", updateWaterState)
 router.get("/waterState/:macAddress", getWaterState)
 router.get("/watertrackingraph", getAllUsertakingrecords)
 router.get("/singletotalwater/:id", singleTotalWater )
+router.post("/waterAmountUpdate", waterAmountUpdate)
 
 module.exports = router;

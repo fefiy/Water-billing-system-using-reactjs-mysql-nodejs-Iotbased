@@ -3,8 +3,6 @@ const cors = require('cors')
 const helmet = require("helmet")
 const cookieParser = require("cookie-parser")
 require('dotenv').config();
-// const { Board, Led } = require('johnny-five');
-// const board = new Board();
 const app = express()
 app.use(express.json());
 app.use(cookieParser()) 

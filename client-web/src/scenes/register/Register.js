@@ -36,7 +36,7 @@ const Register = () => {
       await makeRequest.post("/register" ,inputs)
       navigate("/");
     }catch(err){
-     setErr(err)
+     setErr(err.response)
       console.log(err)
     }
   };
@@ -98,9 +98,9 @@ const Register = () => {
                 ))}
               </select>
             </div>
-            {/* {err && <div>
-              {err.response}
-              </div>} */}
+            {err && <div>
+              {err.data}
+              </div>}
           </>
         ) : (
           <>
@@ -176,10 +176,11 @@ const Register = () => {
                   </option>
                 ))}
               </select>
+              {err && <div style={{color:"red"}}>
+              {err.data}
+              </div>}
             </div>
-            {/* {err && <div>
-              {err.response}
-              </div>} */}
+           
           </>
         )}
       </div>

@@ -22,6 +22,7 @@ const singleTotalWater = (req, res)=>{
   const q = `SELECT * from waterusage WHERE user_id = ${id}`
   db.query(q, (err, data)=>{
     if(err) return res.status(500).json(err)
+    console.log(data)
     return res.status(200).json(data)
   })
 }
@@ -495,6 +496,18 @@ const getWaterState = (req, res) => {
 };
 
 
+const waterAmountUpdate = (req, res) => {
+  console.log(req.body);
+  const { amount, id } = req.body;
+  const q = "UPDATE waterusage SET amount = ? WHERE user_id = ?";
+  db.query(q, [amount, id], (err, data) => {
+    if (err) return res.status(500).json(err);
+    return res.status(201).json("Update updated successfully");
+  });
+};
+
+
+
 module.exports = {
   getAmount,
   temp,
@@ -507,7 +520,8 @@ module.exports = {
   updateWaterState,
   getWaterState,
   getAllUsertakingrecords,
-  singleTotalWater
+  singleTotalWater,
+  waterAmountUpdate
 };
 
 // const userTrackingData = [

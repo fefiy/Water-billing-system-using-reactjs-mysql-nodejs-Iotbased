@@ -63,7 +63,17 @@ const register = (req, res) => {
 
       db.query(q, [values], (err, data) => {
         if (err) return res.status(500).json(err);
-        return res.status(200).json("User has been created.");
+         console.log(data)
+        const qw =  "INSERT INTO waterusage (`user_id`, `amount`,`date` ) VALUE (?)"; 
+          const val = [
+            data. insertId,
+            0,
+            Date.now()
+          ]
+          db.query(qw, [val], (err, data)=>{
+        if (err) return res.status(500).json(err);
+             return res.status(200).json("User has been created.");
+          })
       });
     });
   }
