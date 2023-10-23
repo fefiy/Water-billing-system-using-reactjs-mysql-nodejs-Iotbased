@@ -114,8 +114,9 @@ const login = (req, res) => {
     // Check admin credentials
     db.query(adminQuery, [mac], (err, adminResults) => {
       if (err) return res.status(500).json(err);
-
+      console.log("admin register")
       if (adminResults.length > 0) {
+        // 
         const admin = adminResults[0];
         const passwordMatch = bcrypt.compareSync(password, admin.password);
 
