@@ -1,6 +1,6 @@
 import axios from "axios";
 
 export const makeRequest = axios.create({
-    baseURL: "http://localhost:3004/api/",
+    baseURL: "https://node-mysql-water.onrender.com/api/",
     withCredentials: true,
   });
